@@ -17,9 +17,11 @@ required_files = [
     'connectors/__init__.py',
     'connectors/odbc_connector.py',
     'connectors/logger_utils.py',
+    'connectors/config_loader.py',
     'services/__init__.py',
     'services/birdeye_export.py',
-    'config.example.py',
+    'services/example_service.py',
+    '.env.example',
     'requirements.txt'
 ]
 
@@ -96,6 +98,6 @@ print("Structure validation complete! ✓")
 print("="*50)
 print("\nNext steps:")
 print("1. Install dependencies: pip install -r requirements.txt")
-print("2. Copy config.example.py to config.py and update credentials")
+print("2. Copy .env.example to .env and update credentials")
 print("3. Run a service script: python services/birdeye_export.py")
 

@@ -90,16 +90,28 @@ def main():
         with connector:
             logger.info("Connected to database successfully")
             
-            # Example query - replace with your actual query
+            # Query customer journey data for BirdEye review requests
+            # Focus on completed jobs for review solicitation
             query = """
                 SELECT 
-                    customer_id,
+                    id,
+                    brand_name,
                     customer_name,
                     email,
                     phone,
-                    last_interaction_date
-                FROM customers
-                WHERE active = 1
+                    address,
+                    city,
+                    state,
+                    zip,
+                    service_type,
+                    job_completed_date,
+                    actual_value,
+                    notes
+                FROM customer_journey
+                WHERE journey_stage = 'Job Completed'
+                    AND active = 1
+                    AND job_completed_date >= DATE_SUB(CURDATE(), INTERVAL 30 DAYS)
+                ORDER BY job_completed_date DESC
             """
             
             # Execute query

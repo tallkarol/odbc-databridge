@@ -20,21 +20,45 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from connectors.odbc_connector import ODBCConnector
 from connectors.logger_utils import setup_logger
+from connectors.config_loader import get_db_config, get_endpoint
 import json
+import requests
 
 
-def export_to_birdeye(data, output_path='exports/birdeye_export.json'):
+def export_to_birdeye(data, logger, output_path='exports/birdeye_export.json'):
     """
     Export data in a format suitable for Birdeye integration.
+    Sends data to Zapier mock endpoint and saves locally.
     
     Args:
         data: List of dictionaries containing the data to export
+        logger: Logger instance for logging
         output_path: Path to save the exported file
     """
     os.makedirs(os.path.dirname(output_path), exist_ok=True)
     
+    # Save data locally
     with open(output_path, 'w') as f:
         json.dump(data, f, indent=2, default=str)
+    
+    # Send data to Zapier endpoint
+    try:
+        endpoint = get_endpoint('birdeye')
+        logger.info(f"Sending data to Birdeye endpoint: {endpoint}")
+        
+        response = requests.post(
+            endpoint,
+            json={'data': data, 'service': 'birdeye', 'record_count': len(data)},
+            headers={'Content-Type': 'application/json'},
+            timeout=30
+        )
+        
+        response.raise_for_status()
+        logger.info(f"Successfully sent data to Birdeye endpoint. Status: {response.status_code}")
+        
+    except Exception as e:
+        logger.error(f"Failed to send data to Birdeye endpoint: {e}")
+        # Don't raise - allow local export to succeed even if webhook fails
     
     return output_path
 
@@ -47,12 +71,9 @@ def main():
     logger.info("Starting Birdeye export process")
     
     try:
-        # Import configuration
-        try:
-            from config import DB_CONFIG
-        except ImportError:
-            logger.error("config.py not found. Please copy config.example.py to config.py and update with your credentials.")
-            sys.exit(1)
+        # Load configuration from .env file
+        logger.info("Loading configuration")
+        DB_CONFIG = get_db_config()
         
         # Initialize connector
         logger.info("Initializing database connector")
@@ -88,7 +109,7 @@ def main():
             
             # Export data for Birdeye
             logger.info("Exporting data for Birdeye")
-            output_file = export_to_birdeye(data)
+            output_file = export_to_birdeye(data, logger)
             logger.info(f"Data exported successfully to {output_file}")
         
         # Connection automatically closed by context manager

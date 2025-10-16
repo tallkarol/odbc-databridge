@@ -33,6 +33,7 @@ exports/*
 
 # Configuration files with sensitive data
 config.py
+.env
 
 # IDE
 .vscode/

@@ -18,24 +18,33 @@ pip install -r requirements.txt
 
 ### 2. Set Up Configuration
 
-Create your configuration file from the template:
+Create your environment configuration file from the template:
 
 ```bash
-cp config.example.py config.py
+cp .env.example .env
 ```
 
-Edit `config.py` with your database credentials:
+Edit `.env` with your database credentials and API endpoints:
 
-```python
-DB_CONFIG = {
-    'driver': 'ODBC Driver 17 for SQL Server',  # Your ODBC driver
-    'server': 'myserver.database.windows.net',  # Your server
-    'database': 'mydatabase',                    # Your database
-    'username': 'myusername',                    # Your username
-    'password': 'mypassword',                    # Your password
-    'port': None                                 # Optional port
-}
+```bash
+# Database Configuration
+DB_DRIVER=ODBC Driver 17 for SQL Server
+DB_SERVER=myserver.database.windows.net
+DB_DATABASE=mydatabase
+DB_USERNAME=myusername
+DB_PASSWORD=mypassword
+DB_PORT=
+
+# API Endpoints (update with your actual endpoints)
+BIRDEYE_ENDPOINT=https://hooks.zapier.com/hooks/catch/23151206/umyaaov/
+EXAMPLE_SERVICE_ENDPOINT=https://hooks.zapier.com/hooks/catch/23151206/umyaaov/
+
+# Logging Configuration
+LOG_DIR=logs
+LOG_LEVEL=INFO
 ```
+
+**Note:** The Zapier endpoint is a mock server for testing. Update it with your actual service endpoints when ready.
 
 ### 3. Test the Setup
 
@@ -150,10 +159,11 @@ To add a new service integration:
 
 ### Cannot connect to database
 
-- Verify your credentials in `config.py`
+- Verify your credentials in `.env` file
 - Check that the ODBC driver is installed
 - Ensure your server allows connections from your IP
 - Check firewall settings
+- Make sure the `.env` file is in the project root directory
 
 ### Module import errors
 

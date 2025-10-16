@@ -1,0 +1,46 @@
+# Git
+.git
+.gitignore
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+
+# Logs and exports
+logs/
+exports/
+
+# Configuration
+.env
+config.py
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Test files
+test_structure.py
+test_api.py
+
+# Documentation (not needed in container)
+README.md
+SETUP.md
+REFERENCE.md
+POSTMAN.md
+
+# Other
+setup_dummy_data.sql
+.env.example

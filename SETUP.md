@@ -266,6 +266,120 @@ sudo ACCEPT_EULA=Y apt-get install -y msodbcsql17
 - Update `DB_DRIVER` in `.env` to match installed driver name
 - List installed drivers: `odbcinst -q -d`
 
+## Running as an API Server
+
+The project includes a simple API server for triggering scripts via HTTP requests.
+
+### Start the API Server
+
+**Development:**
+```bash
+python api.py
+```
+
+**Production (with gunicorn):**
+```bash
+pip install gunicorn
+gunicorn -w 4 -b 0.0.0.0:8080 api:app
+```
+
+### API Endpoints
+
+**Health Check:**
+```bash
+curl http://localhost:8080/
+```
+
+**Trigger Birdeye Export (all brands):**
+```bash
+curl -X POST http://localhost:8080/api/birdeye/export
+```
+
+**Trigger Birdeye Export (specific brand):**
+```bash
+curl -X POST http://localhost:8080/api/birdeye/export \
+  -H "Content-Type: application/json" \
+  -d '{"brand_name": "YourBrandName"}'
+```
+
+### Test the API
+
+```bash
+python test_api.py
+```
+
+### Deploy to Google Cloud
+
+**Cloud Run (recommended):**
+1. Create a `Dockerfile` (see below)
+2. Deploy:
+   ```bash
+   gcloud run deploy odbc-databridge \
+     --source . \
+     --region us-central1 \
+     --allow-unauthenticated
+   ```
+
+**App Engine:**
+1. Create an `app.yaml` (see below)
+2. Deploy:
+   ```bash
+   gcloud app deploy
+   ```
+
+**Compute Engine:**
+1. SSH into your instance
+2. Clone the repository
+3. Install dependencies and run with gunicorn
+
+#### Sample Dockerfile for Cloud Run
+
+```dockerfile
+FROM python:3.11-slim
+
+WORKDIR /app
+
+# Install ODBC drivers
+RUN apt-get update && apt-get install -y \
+    unixodbc unixodbc-dev \
+    libmyodbc \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install Python dependencies
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt gunicorn
+
+# Copy application code
+COPY . .
+
+# Expose port
+EXPOSE 8080
+
+# Run with gunicorn
+CMD exec gunicorn --bind :$PORT --workers 1 --threads 8 --timeout 0 api:app
+```
+
+#### Sample app.yaml for App Engine
+
+```yaml
+runtime: python311
+
+env_variables:
+  DB_DRIVER: "MySQL ODBC 8.0 Unicode Driver"
+  DB_SERVER: "your-instance-ip"
+  DB_DATABASE: "your-database"
+  DB_USERNAME: "your-username"
+  DB_PASSWORD: "your-password"
+  DB_PORT: "3306"
+  BIRDEYE_ENDPOINT: "https://hooks.zapier.com/hooks/catch/23151206/umyaaov/"
+  LOG_DIR: "logs"
+  LOG_LEVEL: "INFO"
+
+entrypoint: gunicorn -b :$PORT api:app
+```
+
+**Note:** For production, use Google Secret Manager instead of environment variables for credentials.
+
 ## Next Steps
 
 1. ✅ Dependencies installed
@@ -273,8 +387,9 @@ sudo ACCEPT_EULA=Y apt-get install -y msodbcsql17
 3. ✅ Test script runs successfully
 4. ✅ Logs and exports are created
 5. → Customize for your use cases
-6. → Set up cron schedules
+6. → Set up cron schedules OR run as API server
 7. → Update endpoints when ready for production
+8. → Deploy to Google Cloud (optional)
 
 ## Security Notes
 

@@ -1,0 +1,20 @@
+runtime: python311
+
+env_variables:
+  # Database Configuration
+  DB_DRIVER: "MySQL ODBC 8.0 Unicode Driver"
+  DB_SERVER: "your-instance-ip"
+  DB_DATABASE: "your-database"
+  DB_USERNAME: "your-username"
+  DB_PASSWORD: "your-password"
+  DB_PORT: "3306"
+  
+  # API Endpoints
+  BIRDEYE_ENDPOINT: "https://hooks.zapier.com/hooks/catch/23151206/umyaaov/"
+  EXAMPLE_SERVICE_ENDPOINT: "https://hooks.zapier.com/hooks/catch/23151206/umyaaov/"
+  
+  # Logging
+  LOG_DIR: "logs"
+  LOG_LEVEL: "INFO"
+
+entrypoint: gunicorn -b :$PORT api:app

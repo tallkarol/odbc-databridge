@@ -34,13 +34,21 @@ def process_data(data):
     Returns:
         Processed data ready for export
     """
-    # Example processing: transform data as needed
+    # Example processing: transform and enrich customer journey data
     processed = []
     for row in data:
         processed.append({
             'id': row.get('id'),
-            'name': row.get('name'),
-            # Add your processing logic here
+            'brand': row.get('brand_name'),
+            'customer': row.get('customer_name'),
+            'contact_email': row.get('email'),
+            'contact_phone': row.get('phone'),
+            'location': f"{row.get('city')}, {row.get('state')} {row.get('zip')}",
+            'stage': row.get('journey_stage'),
+            'service': row.get('service_type'),
+            'lead_source': row.get('lead_source'),
+            'value': float(row.get('estimated_value', 0)),
+            'lead_date': str(row.get('lead_date'))
         })
     return processed
 
@@ -112,19 +120,33 @@ def main():
         with connector:
             logger.info("Connected to database successfully")
             
-            # Define your SQL query
+            # Query customer journey data for all active leads
+            # This demonstrates querying leads that need follow-up
             query = """
                 SELECT 
                     id,
-                    name,
-                    created_date
-                FROM your_table
-                WHERE status = ?
+                    brand_name,
+                    customer_name,
+                    email,
+                    phone,
+                    address,
+                    city,
+                    state,
+                    zip,
+                    journey_stage,
+                    service_type,
+                    lead_source,
+                    estimated_value,
+                    lead_date
+                FROM customer_journey
+                WHERE journey_stage IN ('Fresh Lead', 'Appointment Set')
+                    AND active = 1
+                ORDER BY lead_date DESC
             """
             
-            # Execute query with parameters
+            # Execute query
             logger.info("Executing data query")
-            data = connector.execute_query(query, ('active',))
+            data = connector.execute_query(query)
             logger.info(f"Retrieved {len(data)} records from database")
             
             # Process the data

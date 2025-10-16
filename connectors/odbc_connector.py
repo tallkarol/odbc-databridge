@@ -127,7 +127,7 @@ class ODBCConnector:
             List of dictionaries with column names as keys
         """
         if not self.connection:
-            raise RuntimeError("No active connection. Call get_connection() first.")
+            raise RuntimeError("No active connection. Use 'with connector:' or call connect() first.")
         
         try:
             cursor = self.connection.cursor()
@@ -162,7 +162,7 @@ class ODBCConnector:
             Number of rows affected
         """
         if not self.connection:
-            raise RuntimeError("No active connection. Call get_connection() first.")
+            raise RuntimeError("No active connection. Use 'with connector:' or call connect() first.")
         
         try:
             cursor = self.connection.cursor()

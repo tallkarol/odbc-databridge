@@ -76,6 +76,13 @@ try:
     else:
         print(f"✗ Connection string incorrect: {conn_str}")
         sys.exit(1)
+    
+    # Test context manager methods
+    if hasattr(connector, '__enter__') and hasattr(connector, '__exit__'):
+        print("✓ Context manager methods available")
+    else:
+        print("✗ Context manager methods missing")
+        sys.exit(1)
         
 except ImportError as e:
     print(f"⚠ pyodbc not installed (expected if dependencies not installed yet)")

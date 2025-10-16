@@ -65,8 +65,8 @@ def main():
             port=DB_CONFIG.get('port')
         )
         
-        # Connect to database
-        with connector.get_connection() as conn:
+        # Connect to database using context manager
+        with connector:
             logger.info("Connected to database successfully")
             
             # Example query - replace with your actual query
@@ -90,9 +90,8 @@ def main():
             logger.info("Exporting data for Birdeye")
             output_file = export_to_birdeye(data)
             logger.info(f"Data exported successfully to {output_file}")
-            
-        # Close connection
-        connector.close()
+        
+        # Connection automatically closed by context manager
         logger.info("Birdeye export completed successfully")
         
     except Exception as e:

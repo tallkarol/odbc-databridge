@@ -81,11 +81,10 @@ def main():
     
     connector = ODBCConnector(**DB_CONFIG)
     
-    with connector.get_connection() as conn:
+    with connector:
         data = connector.execute_query("YOUR SQL QUERY")
         # Process and export data
     
-    connector.close()
     logger.info("Export completed")
 
 if __name__ == "__main__":
@@ -94,7 +93,7 @@ if __name__ == "__main__":
 
 ## Using the ODBC Connector
 
-The connector is reusable across all scripts:
+The connector is reusable across all scripts and supports context manager pattern:
 
 ```python
 from connectors.odbc_connector import ODBCConnector
@@ -108,15 +107,17 @@ connector = ODBCConnector(
     password='your-password'
 )
 
-# Use with context manager
-with connector.get_connection() as conn:
+# Use with context manager (recommended - auto closes connection)
+with connector:
     # Execute SELECT queries
     results = connector.execute_query("SELECT * FROM table WHERE id = ?", (123,))
     
     # Execute INSERT/UPDATE/DELETE
     rows_affected = connector.execute_non_query("UPDATE table SET status = ? WHERE id = ?", ('active', 123))
 
-# Clean up
+# Or manage connection manually
+connector.connect()
+data = connector.execute_query("SELECT * FROM table")
 connector.close()
 ```
 

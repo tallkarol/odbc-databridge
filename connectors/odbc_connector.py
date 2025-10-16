@@ -25,8 +25,14 @@ class ODBCConnector:
             password='your-password'
         )
         
-        with connector.get_connection() as conn:
+        # Use as context manager (recommended)
+        with connector:
             data = connector.execute_query("SELECT * FROM table")
+            
+        # Or manage connection manually
+        connector.connect()
+        data = connector.execute_query("SELECT * FROM table")
+        connector.close()
     """
     
     def __init__(self, driver: str, server: str, database: str, 
@@ -68,9 +74,9 @@ class ODBCConnector:
         
         return conn_str
     
-    def get_connection(self) -> pyodbc.Connection:
+    def connect(self) -> pyodbc.Connection:
         """
-        Get a connection to the database.
+        Connect to the database.
         
         Returns:
             pyodbc.Connection: Active database connection
@@ -86,6 +92,28 @@ class ODBCConnector:
         except pyodbc.Error as e:
             logging.error(f"Failed to connect to database: {e}")
             raise
+    
+    def get_connection(self) -> pyodbc.Connection:
+        """
+        Get a connection to the database (alias for connect()).
+        
+        Returns:
+            pyodbc.Connection: Active database connection
+            
+        Raises:
+            pyodbc.Error: If connection fails
+        """
+        return self.connect()
+    
+    def __enter__(self):
+        """Context manager entry - establishes database connection."""
+        self.connect()
+        return self
+    
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        """Context manager exit - closes database connection."""
+        self.close()
+        return False
     
     def execute_query(self, query: str, params: Optional[tuple] = None) -> List[Dict[str, Any]]:
         """

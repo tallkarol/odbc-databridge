@@ -87,8 +87,8 @@ def main():
             port=DB_CONFIG.get('port')
         )
         
-        # Connect to database
-        with connector.get_connection() as conn:
+        # Connect to database using context manager
+        with connector:
             logger.info("Connected to database successfully")
             
             # Define your SQL query
@@ -114,9 +114,8 @@ def main():
             logger.info("Exporting data")
             output_file = export_data(processed_data)
             logger.info(f"Data exported successfully to {output_file}")
-            
-        # Close connection
-        connector.close()
+        
+        # Connection automatically closed by context manager
         logger.info("Process completed successfully")
         
     except Exception as e:

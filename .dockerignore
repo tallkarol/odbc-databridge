@@ -36,8 +36,10 @@ test_structure.py
 test_api.py
 
 # Documentation (not needed in container)
-*.md
-!API.md
+README.md
+SETUP.md
+REFERENCE.md
+POSTMAN.md
 
 # Other
 setup_dummy_data.sql

@@ -9,17 +9,19 @@ odbc-databridge/
 ├── connectors/                 # Reusable connector modules
 │   ├── __init__.py
 │   ├── odbc_connector.py      # ODBC connection handler (context manager)
-│   └── logger_utils.py        # Logging utilities
+│   ├── logger_utils.py        # Logging utilities
+│   └── config_loader.py       # Configuration loader (.env and config.py)
 ├── services/                   # Service-specific scripts
 │   ├── __init__.py
-│   ├── birdeye_export.py      # Example: Birdeye integration
+│   ├── birdeye_export.py      # Birdeye integration with Zapier endpoint
 │   └── example_service.py     # Template for new integrations
 ├── logs/                       # Log files (git-ignored)
 │   └── .gitkeep
 ├── exports/                    # Export data files (git-ignored)
 │   └── .gitkeep
-├── .gitignore                  # Excludes logs, exports, config.py
-├── config.example.py           # Configuration template
+├── .gitignore                  # Excludes logs, exports, config.py, .env
+├── .env.example                # Environment configuration template
+├── config.example.py           # Configuration template (legacy)
 ├── requirements.txt            # Python dependencies
 ├── test_structure.py           # Validation test script
 ├── README.md                   # Full documentation
@@ -61,11 +63,13 @@ Single-destination integration scripts:
 - Logs all operations
 - Designed for cron scheduling
 
-### 4. Configuration (`config.example.py`)
-Template for database credentials:
-- Separate from code (git-ignored)
-- Simple dictionary structure
+### 4. Configuration (`.env.example` and `config_loader.py`)
+Environment-based configuration:
+- `.env` files for credentials and endpoints (git-ignored)
+- `config_loader.py` module for loading configuration
+- Backward compatible with `config.py` approach
 - Easy to customize per environment
+- Supports multiple service endpoints
 
 ## Features
 
@@ -85,10 +89,10 @@ Template for database credentials:
    pip install -r requirements.txt
    ```
 
-2. **Configure database:**
+2. **Configure database and endpoints:**
    ```bash
-   cp config.example.py config.py
-   # Edit config.py with your credentials
+   cp .env.example .env
+   # Edit .env with your credentials and API endpoints
    ```
 
 3. **Run validation test:**
@@ -132,8 +136,11 @@ Template for database credentials:
 
 ## Dependencies
 
-- `pyodbc>=4.0.39` - ODBC database connectivity
-- `python-dotenv>=1.0.0` - Environment variable management
+- `pyodbc>=4.0.39` - ODBC database connectivity (supports Simba and other ODBC drivers)
+- `python-dotenv>=1.0.0` - Environment variable management from `.env` files
+- `pandas>=2.0.0` - Data manipulation and analysis
+- `sqlalchemy>=2.0.0` - SQL toolkit and ORM for alternative database connectivity
+- `requests>=2.31.0` - HTTP library for API integrations
 - Python 3.7+ - Core runtime
 
 ## Design Principles
@@ -170,7 +177,7 @@ This checks:
 For issues or questions:
 1. Check the README.md troubleshooting section
 2. Review logs in the `logs/` directory
-3. Verify configuration in `config.py`
+3. Verify configuration in `.env` file
 4. Run `python test_structure.py` to validate setup
 
 ---

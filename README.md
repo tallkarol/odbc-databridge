@@ -9,6 +9,16 @@ A Google Cloud hosted repository of use-case specific Python scripts for impleme
 - **File-Based Logging**: All operations logged to text files in the `logs/` directory
 - **Cron-Ready**: Designed to run on scheduled intervals via cron jobs
 - **Simple & Expandable**: Minimal structure that's easy to understand and extend
+- **Flexible Configuration**: Environment-based configuration using `.env` files
+- **API Integration**: Built-in support for sending data to external endpoints (e.g., Zapier webhooks)
+
+## Key Libraries
+
+- **pyodbc**: ODBC database connectivity (supports Microsoft SQL Server, Simba drivers, and other ODBC-compatible databases)
+- **pandas**: Data manipulation and analysis (available for advanced data processing)
+- **sqlalchemy**: SQL toolkit and ORM (available for alternative database connectivity)
+- **python-dotenv**: Environment variable management from `.env` files
+- **requests**: HTTP library for API integrations
 
 ## Project Structure
 
@@ -35,26 +45,35 @@ odbc-databridge/
 pip install -r requirements.txt
 ```
 
-### 2. Configure Database Connection
+### 2. Configure Database Connection and API Endpoints
 
-Copy the example configuration file and update with your credentials:
+Copy the example environment file and update with your credentials:
 
 ```bash
-cp config.example.py config.py
+cp .env.example .env
 ```
 
-Edit `config.py` with your database details:
+Edit `.env` with your database details and API endpoints:
 
-```python
-DB_CONFIG = {
-    'driver': 'ODBC Driver 17 for SQL Server',
-    'server': 'your-server.database.windows.net',
-    'database': 'your-database-name',
-    'username': 'your-username',
-    'password': 'your-password',
-    'port': None  # Optional
-}
+```bash
+# Database Configuration
+DB_DRIVER=ODBC Driver 17 for SQL Server
+DB_SERVER=your-server.database.windows.net
+DB_DATABASE=your-database-name
+DB_USERNAME=your-username
+DB_PASSWORD=your-password
+DB_PORT=
+
+# API Endpoints
+BIRDEYE_ENDPOINT=https://hooks.zapier.com/hooks/catch/23151206/umyaaov/
+EXAMPLE_SERVICE_ENDPOINT=https://hooks.zapier.com/hooks/catch/23151206/umyaaov/
+
+# Logging Configuration
+LOG_DIR=logs
+LOG_LEVEL=INFO
 ```
+
+**Note:** For backward compatibility, `config.py` files are still supported but `.env` files are now the preferred method.
 
 ### 3. Run a Service Script
 
@@ -73,17 +92,23 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from connectors.odbc_connector import ODBCConnector
 from connectors.logger_utils import setup_logger
-from config import DB_CONFIG
+from connectors.config_loader import get_db_config, get_endpoint
+import requests
 
 def main():
     logger = setup_logger('your_service_name')
     logger.info("Starting export process")
     
+    DB_CONFIG = get_db_config()
     connector = ODBCConnector(**DB_CONFIG)
     
     with connector:
         data = connector.execute_query("YOUR SQL QUERY")
         # Process and export data
+        
+        # Send to endpoint
+        endpoint = get_endpoint('your_service_name')
+        response = requests.post(endpoint, json={'data': data})
     
     logger.info("Export completed")
 
@@ -178,9 +203,10 @@ sudo ACCEPT_EULA=Y apt-get install -y msodbcsql17
 
 ## Security Notes
 
-- Never commit `config.py` to version control (it's in `.gitignore`)
-- Use environment variables or secure secret management for production
-- Restrict file permissions on `config.py`: `chmod 600 config.py`
+- Never commit `.env` or `config.py` to version control (they're in `.gitignore`)
+- `.env` files are the preferred way to manage configuration
+- Restrict file permissions on `.env`: `chmod 600 .env`
+- For production, consider using secure secret management services (AWS Secrets Manager, Azure Key Vault, etc.)
 
 ## License
 

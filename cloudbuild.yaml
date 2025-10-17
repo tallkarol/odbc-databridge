@@ -1,0 +1,30 @@
+# Cloud Build configuration for building and deploying to Cloud Run
+# This file is used by gcloud builds submit
+steps:
+  # Build the container image
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['build', '-t', 'gcr.io/$PROJECT_ID/odbc-databridge:$COMMIT_SHA', '.']
+  
+  # Push the container image to Container Registry
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['push', 'gcr.io/$PROJECT_ID/odbc-databridge:$COMMIT_SHA']
+  
+  # Deploy container image to Cloud Run
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    entrypoint: gcloud
+    args:
+      - 'run'
+      - 'deploy'
+      - 'odbc-databridge'
+      - '--image=gcr.io/$PROJECT_ID/odbc-databridge:$COMMIT_SHA'
+      - '--region=us-central1'
+      - '--platform=managed'
+      - '--allow-unauthenticated'
+      - '--set-env-vars=DB_DRIVER=MySQL ODBC 8.0 Unicode Driver,DB_SERVER=34.152.118.156,DB_DATABASE=odcb_databridge-db,DB_USERNAME=odcb-databridge-db,DB_PORT=3306,BIRDEYE_ENDPOINT=https://hooks.zapier.com/hooks/catch/23151206/umyaaov/,EXAMPLE_SERVICE_ENDPOINT=https://hooks.zapier.com/hooks/catch/23151206/umyaaov/,LOG_DIR=logs,LOG_LEVEL=INFO'
+      # Note: DB_PASSWORD should be set separately using --set-secrets for security
+
+images:
+  - 'gcr.io/$PROJECT_ID/odbc-databridge:$COMMIT_SHA'
+
+options:
+  logging: CLOUD_LOGGING_ONLY

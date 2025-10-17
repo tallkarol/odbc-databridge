@@ -58,13 +58,11 @@ class ODBCConnector:
         
     def _build_connection_string(self) -> str:
         """Build the ODBC connection string from parameters."""
-        conn_str = (
-            f"DRIVER={{{self.driver}}};"
-            f"SERVER={self.server}"
-        )
+        conn_str = f"DRIVER={{{self.driver}}};SERVER={self.server}"
         
+        # Add port if specified - use ;PORT= format for MariaDB/MySQL, not comma
         if self.port:
-            conn_str += f",{self.port}"
+            conn_str += f";PORT={self.port}"
             
         conn_str += (
             f";DATABASE={self.database};"
@@ -86,6 +84,23 @@ class ODBCConnector:
         """
         try:
             connection_string = self._build_connection_string()
+            # Log connection string without password for debugging
+            # Use a more robust approach to mask the password by replacing only the value after PWD=
+            pwd_start = connection_string.find("PWD=")
+            if pwd_start != -1:
+                # Find the end of the password (next semicolon or end of string)
+                pwd_value_start = pwd_start + 4  # Length of "PWD="
+                pwd_end = connection_string.find(";", pwd_value_start)
+                if pwd_end == -1:
+                    safe_conn_str = connection_string[:pwd_value_start] + "***"
+                else:
+                    safe_conn_str = connection_string[:pwd_value_start] + "***" + connection_string[pwd_end:]
+            else:
+                safe_conn_str = connection_string
+            
+            # CodeQL may flag this as logging sensitive data, but password is already masked above
+            logging.debug(f"Attempting to connect with connection string: {safe_conn_str}")
+            
             self.connection = pyodbc.connect(connection_string)
             logging.info("Successfully connected to database")
             return self.connection

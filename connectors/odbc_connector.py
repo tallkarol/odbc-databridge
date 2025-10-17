@@ -85,8 +85,20 @@ class ODBCConnector:
         try:
             connection_string = self._build_connection_string()
             # Log connection string without password for debugging
-            safe_conn_str = connection_string.replace(f"PWD={self.password}", "PWD=***")
-            logging.info(f"Attempting to connect with connection string: {safe_conn_str}")
+            # Use a more robust approach to mask the password by replacing only the value after PWD=
+            pwd_start = connection_string.find("PWD=")
+            if pwd_start != -1:
+                # Find the end of the password (next semicolon or end of string)
+                pwd_value_start = pwd_start + 4  # Length of "PWD="
+                pwd_end = connection_string.find(";", pwd_value_start)
+                if pwd_end == -1:
+                    safe_conn_str = connection_string[:pwd_value_start] + "***"
+                else:
+                    safe_conn_str = connection_string[:pwd_value_start] + "***" + connection_string[pwd_end:]
+            else:
+                safe_conn_str = connection_string
+            
+            logging.debug(f"Attempting to connect with connection string: {safe_conn_str}")
             
             self.connection = pyodbc.connect(connection_string)
             logging.info("Successfully connected to database")

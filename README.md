@@ -155,3 +155,26 @@ See LICENSE file for details.
 For issues or questions:
 1. View logs: `gcloud run services logs read odbc-databridge --region us-central1 --limit 50`
 2. Open an issue in the repository
+
+## Troubleshooting
+
+### ODBC Driver Error: "Can't open lib 'MySQL ODBC 8.0 Unicode Driver'"
+
+This error occurs when the Cloud Run environment has the wrong driver name configured. The Dockerfile installs `odbc-mariadb` which provides the driver name **"MariaDB Unicode"**.
+
+**Solution:** Redeploy with the correct driver configuration:
+
+```bash
+# Option 1: Use the deploy script (recommended - it has the correct configuration)
+./deploy.sh YOUR_DATABASE_PASSWORD
+
+# Option 2: Update just the driver environment variable
+gcloud run services update odbc-databridge \
+  --region us-central1 \
+  --set-env-vars "DB_DRIVER=MariaDB Unicode"
+```
+
+After updating, test the endpoint:
+```bash
+curl -X POST https://your-service-url.run.app/api/birdeye/export
+```

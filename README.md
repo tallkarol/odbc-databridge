@@ -160,7 +160,7 @@ For issues or questions:
 
 ### ODBC Driver Error: "Can't open lib 'MySQL ODBC 8.0 Unicode Driver'"
 
-This error occurs when the Cloud Run environment has the wrong driver name configured. The Dockerfile installs `odbc-mariadb` which provides the driver name **"MariaDB Unicode"** (you can verify the correct driver name in `.env.example`).
+This error occurs when the Cloud Run environment has the wrong driver name configured. The Dockerfile installs `odbc-mariadb` which provides the driver name **"MariaDB Unicode"**. You can verify this correct driver name is documented in `.env.example`.
 
 **Solution:** Redeploy with the correct driver configuration:
 

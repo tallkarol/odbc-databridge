@@ -153,7 +153,7 @@ if __name__ == "__main__":
 
 ```bash
 # Database - use Simba for ODBC connections
-DB_DRIVER=MySQL ODBC 8.0 Unicode Driver  # Or: Simba SQL Server ODBC Driver
+DB_DRIVER=MariaDB Unicode  # Or: Simba SQL Server ODBC Driver
 DB_SERVER=your-server-address
 DB_DATABASE=your-database-name
 DB_USERNAME=your-username
@@ -294,13 +294,13 @@ crontab -e
 ## Database Support
 
 ### Tested/Supported
-- **Google Cloud MySQL** - Use MySQL ODBC driver
+- **Google Cloud MySQL** - Use MariaDB Unicode ODBC driver
 - **Microsoft SQL Server** - Use Simba or Microsoft ODBC drivers
 - Any ODBC-compatible database
 
 ### Driver Configuration
 Specify driver name in `.env` `DB_DRIVER` field. Common options:
-- `MySQL ODBC 8.0 Unicode Driver`
+- `MariaDB Unicode`
 - `Simba SQL Server ODBC Driver`
 - `ODBC Driver 17 for SQL Server`
 - `PostgreSQL Unicode`

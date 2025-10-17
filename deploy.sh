@@ -66,7 +66,7 @@ REGION="us-central1"
 SERVICE_NAME="odbc-databridge"
 
 # Database configuration (from .env file)
-DB_DRIVER="MySQL ODBC 8.0 Unicode Driver"
+DB_DRIVER="MariaDB Unicode"
 DB_SERVER="34.152.118.156"
 DB_DATABASE="odcb_databridge-db"
 DB_USERNAME="odcb-databridge-db"

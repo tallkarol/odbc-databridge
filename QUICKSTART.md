@@ -42,7 +42,7 @@ gcloud run deploy odbc-databridge \
   --source . \
   --region us-central1 \
   --allow-unauthenticated \
-  --set-env-vars "DB_DRIVER=MySQL ODBC 8.0 Unicode Driver" \
+  --set-env-vars "DB_DRIVER=MariaDB Unicode" \
   --set-env-vars "DB_SERVER=34.152.118.156" \
   --set-env-vars "DB_DATABASE=odcb_databridge-db" \
   --set-env-vars "DB_USERNAME=odcb-databridge-db" \

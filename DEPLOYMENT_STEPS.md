@@ -59,7 +59,7 @@ gcloud run deploy odbc-databridge \
   --source . \
   --region us-central1 \
   --allow-unauthenticated \
-  --set-env-vars "DB_DRIVER=MySQL ODBC 8.0 Unicode Driver" \
+  --set-env-vars "DB_DRIVER=MariaDB Unicode" \
   --set-env-vars "DB_SERVER=34.152.118.156" \
   --set-env-vars "DB_DATABASE=odcb_databridge-db" \
   --set-env-vars "DB_USERNAME=odcb-databridge-db" \
@@ -181,7 +181,7 @@ gcloud run services logs read odbc-databridge --region us-central1 --limit 50
 
 2. **Database connection blocked** - Make sure your Cloud SQL instance allows connections from Cloud Run
 
-3. **ODBC driver issue** - The Dockerfile installs libmyodbc which provides the MySQL ODBC driver
+3. **ODBC driver issue** - The Dockerfile installs odbc-mariadb which provides the MariaDB Unicode driver
 
 ### Problem: Can't find service URL
 

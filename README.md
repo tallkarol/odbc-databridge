@@ -4,21 +4,11 @@ A Flask-based API service that bridges ODBC database connections with external s
 
 ## 🚀 Quick Deploy to Google Cloud
 
-**Want to deploy right now?** See **[DEPLOYMENT_STEPS.md](DEPLOYMENT_STEPS.md)** for the fastest path to production.
+Deploy to Cloud Run with one command:
 
 ```bash
-# One command deployment:
 ./deploy.sh YOUR_DATABASE_PASSWORD
 ```
-
-## 📚 Documentation
-
-- **[DEPLOYMENT_STEPS.md](DEPLOYMENT_STEPS.md)** - Step-by-step deployment guide (START HERE)
-- **[QUICKSTART.md](QUICKSTART.md)** - Quick reference for deployment
-- **[DEPLOY.md](DEPLOY.md)** - Comprehensive deployment documentation
-- **[API.md](API.md)** - API endpoint reference
-- **[SETUP.md](SETUP.md)** - Local development setup
-- **[POSTMAN.md](POSTMAN.md)** - Postman testing guide
 
 ## Features
 
@@ -73,19 +63,34 @@ Optional JSON body:
 
 ## Google Cloud Deployment
 
-### Cloud Run (Recommended)
+### Initial Deployment
 
 ```bash
 ./deploy.sh YOUR_DATABASE_PASSWORD
 ```
 
-See [DEPLOYMENT_STEPS.md](DEPLOYMENT_STEPS.md) for detailed instructions.
+### Update Existing Deployment
 
-### App Engine
+To update an existing Cloud Run deployment with code changes:
 
 ```bash
-# Edit app.yaml with your credentials
-gcloud app deploy
+# Method 1: Using the deploy script (recommended)
+./deploy.sh YOUR_DATABASE_PASSWORD
+
+# Method 2: Using gcloud CLI directly
+gcloud run deploy odbc-databridge \
+  --source . \
+  --region us-central1
+
+# Method 3: Update specific environment variables only
+gcloud run services update odbc-databridge \
+  --region us-central1 \
+  --set-env-vars "DB_PASSWORD=new_password"
+```
+
+View deployment logs:
+```bash
+gcloud run services logs read odbc-databridge --region us-central1 --limit 50
 ```
 
 ## Configuration
@@ -106,12 +111,14 @@ Configure via environment variables (`.env` file or Cloud Run environment):
 ## Testing Deployment
 
 ```bash
-# Automated testing
-./test_deployment.sh
+# Get your service URL
+SERVICE_URL=$(gcloud run services describe odbc-databridge --region us-central1 --format='value(status.url)')
 
-# Or manually
-curl https://your-service-url.run.app/
-curl -X POST https://your-service-url.run.app/api/birdeye/export
+# Test health check
+curl $SERVICE_URL/
+
+# Test Birdeye export endpoint
+curl -X POST $SERVICE_URL/api/birdeye/export
 ```
 
 ## Architecture
@@ -146,6 +153,32 @@ See LICENSE file for details.
 ## Support
 
 For issues or questions:
-1. Check the [DEPLOYMENT_STEPS.md](DEPLOYMENT_STEPS.md) troubleshooting section
-2. View logs: `gcloud run services logs read odbc-databridge --region us-central1 --limit 50`
-3. Open an issue in the repository
+1. View logs: `gcloud run services logs read odbc-databridge --region us-central1 --limit 50`
+2. Open an issue in the repository
+
+## Troubleshooting
+
+### ODBC Driver Error: "Can't open lib 'MySQL ODBC 8.0 Unicode Driver'"
+
+This error occurs when the Cloud Run environment has the wrong driver name configured. The Dockerfile installs `odbc-mariadb` which provides the driver name **"MariaDB Unicode"**. You can verify this correct driver name is documented in `.env.example`.
+
+**Solution:** Redeploy with the correct driver configuration:
+
+```bash
+# Option 1: Use the deploy script (recommended - it has the correct configuration)
+./deploy.sh YOUR_DATABASE_PASSWORD
+
+# Option 2: Update just the driver environment variable
+gcloud run services update odbc-databridge \
+  --region us-central1 \
+  --set-env-vars "DB_DRIVER=MariaDB Unicode"
+```
+
+After updating, test the endpoint:
+```bash
+# Get your service URL first
+SERVICE_URL=$(gcloud run services describe odbc-databridge --region us-central1 --format='value(status.url)')
+
+# Then test the endpoint
+curl -X POST $SERVICE_URL/api/birdeye/export
+```

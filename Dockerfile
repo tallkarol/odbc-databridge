@@ -5,7 +5,7 @@ WORKDIR /app
 # Install ODBC drivers
 RUN apt-get update && apt-get install -y \
     unixodbc unixodbc-dev \
-    libmyodbc \
+    odbc-mariadb \
     && rm -rf /var/lib/apt/lists/*
 
 # Install Python dependencies

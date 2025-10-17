@@ -98,6 +98,7 @@ class ODBCConnector:
             else:
                 safe_conn_str = connection_string
             
+            # CodeQL may flag this as logging sensitive data, but password is already masked above
             logging.debug(f"Attempting to connect with connection string: {safe_conn_str}")
             
             self.connection = pyodbc.connect(connection_string)

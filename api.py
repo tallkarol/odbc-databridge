@@ -57,7 +57,7 @@ def trigger_birdeye_export():
     
     try:
         # Get optional brand filter from request
-        data = request.get_json() if request.is_json else {}
+        data = request.get_json(silent=True) or {}
         brand_filter = data.get('brand_name')
         
         if brand_filter:

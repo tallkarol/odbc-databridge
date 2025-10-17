@@ -51,7 +51,7 @@ gcloud run deploy odbc-databridge \
   --source . \
   --region us-central1 \
   --allow-unauthenticated \
-  --set-env-vars "DB_DRIVER=MySQL ODBC 8.0 Unicode Driver" \
+  --set-env-vars "DB_DRIVER=MariaDB Unicode" \
   --set-env-vars "DB_SERVER=34.152.118.156" \
   --set-env-vars "DB_DATABASE=odcb_databridge-db" \
   --set-env-vars "DB_USERNAME=odcb-databridge-db" \
@@ -85,7 +85,7 @@ gcloud run deploy odbc-databridge \
   --image gcr.io/YOUR_PROJECT_ID/odbc-databridge:latest \
   --region us-central1 \
   --allow-unauthenticated \
-  --set-env-vars "DB_DRIVER=MySQL ODBC 8.0 Unicode Driver,DB_SERVER=34.152.118.156,DB_DATABASE=odcb_databridge-db,DB_USERNAME=odcb-databridge-db,DB_PASSWORD=YOUR_DB_PASSWORD,DB_PORT=3306,BIRDEYE_ENDPOINT=https://hooks.zapier.com/hooks/catch/23151206/umyaaov/,EXAMPLE_SERVICE_ENDPOINT=https://hooks.zapier.com/hooks/catch/23151206/umyaaov/,LOG_DIR=logs,LOG_LEVEL=INFO"
+  --set-env-vars "DB_DRIVER=MariaDB Unicode,DB_SERVER=34.152.118.156,DB_DATABASE=odcb_databridge-db,DB_USERNAME=odcb-databridge-db,DB_PASSWORD=YOUR_DB_PASSWORD,DB_PORT=3306,BIRDEYE_ENDPOINT=https://hooks.zapier.com/hooks/catch/23151206/umyaaov/,EXAMPLE_SERVICE_ENDPOINT=https://hooks.zapier.com/hooks/catch/23151206/umyaaov/,LOG_DIR=logs,LOG_LEVEL=INFO"
 ```
 
 ### Get the Service URL
@@ -202,7 +202,7 @@ gcloud run services describe odbc-databridge --region us-central1
    - Verify DB_USERNAME has proper permissions
 
 3. **Check ODBC driver**:
-   - The Dockerfile installs `libmyodbc` which provides "MySQL ODBC 8.0 Unicode Driver"
+   - The Dockerfile installs `odbc-mariadb` which provides "MariaDB Unicode" driver
    - If you need a different driver, modify the Dockerfile
 
 ### Update environment variables (Cloud Run):
@@ -232,7 +232,7 @@ Instead of storing passwords in environment variables, use Google Cloud Secret M
      --source . \
      --region us-central1 \
      --set-secrets "DB_PASSWORD=db-password:latest" \
-     --set-env-vars "DB_DRIVER=MySQL ODBC 8.0 Unicode Driver,DB_SERVER=34.152.118.156,DB_DATABASE=odcb_databridge-db,DB_USERNAME=odcb-databridge-db,DB_PORT=3306,BIRDEYE_ENDPOINT=https://hooks.zapier.com/hooks/catch/23151206/umyaaov/,EXAMPLE_SERVICE_ENDPOINT=https://hooks.zapier.com/hooks/catch/23151206/umyaaov/,LOG_DIR=logs,LOG_LEVEL=INFO"
+     --set-env-vars "DB_DRIVER=MariaDB Unicode,DB_SERVER=34.152.118.156,DB_DATABASE=odcb_databridge-db,DB_USERNAME=odcb-databridge-db,DB_PORT=3306,BIRDEYE_ENDPOINT=https://hooks.zapier.com/hooks/catch/23151206/umyaaov/,EXAMPLE_SERVICE_ENDPOINT=https://hooks.zapier.com/hooks/catch/23151206/umyaaov/,LOG_DIR=logs,LOG_LEVEL=INFO"
    ```
 
 ### Restrict Access

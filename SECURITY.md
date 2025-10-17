@@ -48,7 +48,7 @@ gcloud run deploy odbc-databridge \
   --source . \
   --region us-central1 \
   --set-secrets "DB_PASSWORD=db-password:latest" \
-  --set-env-vars "DB_DRIVER=MySQL ODBC 8.0 Unicode Driver,DB_SERVER=34.152.118.156,DB_DATABASE=odcb_databridge-db,DB_USERNAME=odcb-databridge-db,DB_PORT=3306,BIRDEYE_ENDPOINT=https://hooks.zapier.com/hooks/catch/23151206/umyaaov/,LOG_DIR=logs,LOG_LEVEL=INFO"
+  --set-env-vars "DB_DRIVER=MariaDB Unicode,DB_SERVER=34.152.118.156,DB_DATABASE=odcb_databridge-db,DB_USERNAME=odcb-databridge-db,DB_PORT=3306,BIRDEYE_ENDPOINT=https://hooks.zapier.com/hooks/catch/23151206/umyaaov/,LOG_DIR=logs,LOG_LEVEL=INFO"
 ```
 
 **Benefits:**

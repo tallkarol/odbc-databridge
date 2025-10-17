@@ -28,7 +28,7 @@ Edit `.env` with your Google Cloud MySQL credentials:
 
 ```bash
 # For Google Cloud MySQL
-DB_DRIVER=MySQL ODBC 8.0 Unicode Driver
+DB_DRIVER=MariaDB Unicode
 DB_SERVER=your-instance-ip-or-domain
 DB_DATABASE=your-database-name
 DB_USERNAME=your-username
@@ -213,7 +213,7 @@ Common cron patterns:
 ```bash
 sudo apt-get update
 sudo apt-get install -y unixodbc unixodbc-dev
-sudo apt-get install -y libmyodbc
+sudo apt-get install -y odbc-mariadb
 ```
 
 **macOS:**
@@ -342,7 +342,7 @@ WORKDIR /app
 # Install ODBC drivers
 RUN apt-get update && apt-get install -y \
     unixodbc unixodbc-dev \
-    libmyodbc \
+    odbc-mariadb \
     && rm -rf /var/lib/apt/lists/*
 
 # Install Python dependencies
@@ -365,7 +365,7 @@ CMD exec gunicorn --bind :$PORT --workers 1 --threads 8 --timeout 0 api:app
 runtime: python311
 
 env_variables:
-  DB_DRIVER: "MySQL ODBC 8.0 Unicode Driver"
+  DB_DRIVER: "MariaDB Unicode"
   DB_SERVER: "your-instance-ip"
   DB_DATABASE: "your-database"
   DB_USERNAME: "your-username"

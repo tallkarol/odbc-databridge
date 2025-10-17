@@ -97,7 +97,7 @@ curl -X POST $SERVICE_URL/api/birdeye/export
 ## 📊 What Happens When You Deploy?
 
 1. **Google Cloud builds your Docker container** (using the existing Dockerfile)
-2. **Installs ODBC drivers** (MySQL ODBC 8.0 Unicode Driver)
+2. **Installs ODBC drivers** (MariaDB Unicode)
 3. **Deploys to Cloud Run** (serverless, auto-scaling)
 4. **Sets environment variables** (database config, webhook URLs)
 5. **Provides a public URL** (https://...)

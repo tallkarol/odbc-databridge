@@ -92,7 +92,7 @@ gcloud app deploy
 
 Configure via environment variables (`.env` file or Cloud Run environment):
 
-- `DB_DRIVER` - ODBC driver name (e.g., "MySQL ODBC 8.0 Unicode Driver")
+- `DB_DRIVER` - ODBC driver name (e.g., "MariaDB Unicode")
 - `DB_SERVER` - Database server address
 - `DB_DATABASE` - Database name
 - `DB_USERNAME` - Database username

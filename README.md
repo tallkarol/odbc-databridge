@@ -97,7 +97,7 @@ gcloud run services logs read odbc-databridge --region us-central1 --limit 50
 
 Configure via environment variables (`.env` file or Cloud Run environment):
 
-- `DB_DRIVER` - ODBC driver name (e.g., "MariaDB Unicode")
+- `DB_DRIVER` - ODBC driver name (e.g., "MariaDB")
 - `DB_SERVER` - Database server address
 - `DB_DATABASE` - Database name
 - `DB_USERNAME` - Database username
@@ -160,7 +160,7 @@ For issues or questions:
 
 ### ODBC Driver Error: "Can't open lib 'MySQL ODBC 8.0 Unicode Driver'"
 
-This error occurs when the Cloud Run environment has the wrong driver name configured. The Dockerfile installs `odbc-mariadb` which provides the driver name **"MariaDB Unicode"**. You can verify this correct driver name is documented in `.env.example`.
+This error occurs when the Cloud Run environment has the wrong driver name configured. The Dockerfile installs `odbc-mariadb` which provides the driver name **"MariaDB"** (without Unicode). You can verify this correct driver name is documented in `.env.example`.
 
 **Solution:** Redeploy with the correct driver configuration:
 
@@ -171,7 +171,7 @@ This error occurs when the Cloud Run environment has the wrong driver name confi
 # Option 2: Update just the driver environment variable
 gcloud run services update odbc-databridge \
   --region us-central1 \
-  --set-env-vars "DB_DRIVER=MariaDB Unicode"
+  --set-env-vars "DB_DRIVER=MariaDB"
 ```
 
 After updating, test the endpoint:

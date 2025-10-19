@@ -82,36 +82,9 @@ def trigger_birdeye_export():
         with connector:
             logger.info("Connected to database successfully")
             
-            # Build query with optional brand filter
-            query = """
-                SELECT 
-                    id,
-                    brand_name,
-                    customer_name,
-                    email,
-                    phone,
-                    address,
-                    city,
-                    state,
-                    zip,
-                    service_type,
-                    job_completed_date,
-                    actual_value,
-                    notes
-                FROM customer_journey
-                WHERE journey_stage = 'Job Completed'
-                    AND active = 1
-                    AND job_completed_date >= DATE_SUB(CURDATE(), INTERVAL 30 DAYS)
-            """
-            
-            # Add brand filter if specified
-            if brand_filter:
-                query += " AND brand_name = ?"
-                params = (brand_filter,)
-            else:
-                params = None
-            
-            query += " ORDER BY job_completed_date DESC"
+            # Simple test query - just get one record
+            query = "SELECT * FROM databricks LIMIT 1"
+            params = None
             
             # Execute query
             logger.info("Executing data query")

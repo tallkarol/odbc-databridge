@@ -20,7 +20,7 @@ steps:
       - '--region=us-central1'
       - '--platform=managed'
       - '--allow-unauthenticated'
-      - '--set-env-vars=DB_DRIVER=MariaDB Unicode,DB_SERVER=34.152.118.156,DB_DATABASE=odcb_databridge-db,DB_USERNAME=odcb-databridge-db,DB_PORT=3306,BIRDEYE_ENDPOINT=https://hooks.zapier.com/hooks/catch/23151206/umyaaov/,EXAMPLE_SERVICE_ENDPOINT=https://hooks.zapier.com/hooks/catch/23151206/umyaaov/,LOG_DIR=logs,LOG_LEVEL=INFO'
+      - '--set-env-vars=DB_DRIVER=MariaDB,DB_SERVER=34.152.118.156,DB_DATABASE=odcb_databridge-db,DB_USERNAME=odcb-databridge-db,DB_PORT=3306,BIRDEYE_ENDPOINT=https://hooks.zapier.com/hooks/catch/23151206/umyaaov/,EXAMPLE_SERVICE_ENDPOINT=https://hooks.zapier.com/hooks/catch/23151206/umyaaov/,LOG_DIR=logs,LOG_LEVEL=INFO'
       # Note: DB_PASSWORD should be set separately using --set-secrets for security
 
 images:

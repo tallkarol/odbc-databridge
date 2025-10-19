@@ -90,28 +90,28 @@ def main():
         with connector:
             logger.info("Connected to database successfully")
             
-            # Query customer journey data for BirdEye review requests
-            # Focus on completed jobs for review solicitation
+            # Query databricks table for BirdEye review requests
+            # Focus on installed jobs for review solicitation
             query = """
                 SELECT 
-                    id,
-                    brand_name,
+                    src_lead_id,
+                    brand,
                     customer_name,
-                    email,
-                    phone,
-                    address,
-                    city,
-                    state,
-                    zip,
-                    service_type,
-                    job_completed_date,
-                    actual_value,
-                    notes
-                FROM customer_journey
-                WHERE journey_stage = 'Job Completed'
-                    AND active = 1
-                    AND job_completed_date >= DATE_SUB(CURDATE(), INTERVAL 30 DAYS)
-                ORDER BY job_completed_date DESC
+                    customer_email,
+                    customer_phone,
+                    customer_address_1,
+                    customer_city,
+                    customer_state,
+                    customer_zip_postal,
+                    product_of_interest,
+                    install_date,
+                    revenue,
+                    appt_statuses
+                FROM databricks
+                WHERE installed_jobs > 0
+                    AND install_date IS NOT NULL
+                    AND install_date >= DATE_SUB(CURDATE(), INTERVAL 30 DAYS)
+                ORDER BY install_date DESC
             """
             
             # Execute query

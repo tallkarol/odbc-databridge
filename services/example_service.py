@@ -34,21 +34,21 @@ def process_data(data):
     Returns:
         Processed data ready for export
     """
-    # Example processing: transform and enrich customer journey data
+    # Example processing: transform and enrich databricks lead data
     processed = []
     for row in data:
         processed.append({
-            'id': row.get('id'),
-            'brand': row.get('brand_name'),
+            'id': row.get('src_lead_id'),
+            'brand': row.get('brand'),
             'customer': row.get('customer_name'),
-            'contact_email': row.get('email'),
-            'contact_phone': row.get('phone'),
-            'location': f"{row.get('city')}, {row.get('state')} {row.get('zip')}",
-            'stage': row.get('journey_stage'),
-            'service': row.get('service_type'),
-            'lead_source': row.get('lead_source'),
-            'value': float(row.get('estimated_value', 0)),
-            'lead_date': str(row.get('lead_date'))
+            'contact_email': row.get('customer_email'),
+            'contact_phone': row.get('customer_phone'),
+            'location': f"{row.get('customer_city')}, {row.get('customer_state')} {row.get('customer_zip_postal')}",
+            'stage': row.get('appt_statuses'),
+            'service': row.get('product_of_interest'),
+            'lead_source': row.get('enterprise_ad_sub_category'),
+            'value': float(row.get('bookings_gross', 0) or 0),
+            'lead_date': str(row.get('lead_created_date'))
         })
     return processed
 
@@ -120,28 +120,28 @@ def main():
         with connector:
             logger.info("Connected to database successfully")
             
-            # Query customer journey data for all active leads
+            # Query databricks table for all active leads
             # This demonstrates querying leads that need follow-up
             query = """
                 SELECT 
-                    id,
-                    brand_name,
+                    src_lead_id,
+                    brand,
                     customer_name,
-                    email,
-                    phone,
-                    address,
-                    city,
-                    state,
-                    zip,
-                    journey_stage,
-                    service_type,
-                    lead_source,
-                    estimated_value,
-                    lead_date
-                FROM customer_journey
-                WHERE journey_stage IN ('Fresh Lead', 'Appointment Set')
-                    AND active = 1
-                ORDER BY lead_date DESC
+                    customer_email,
+                    customer_phone,
+                    customer_address_1,
+                    customer_city,
+                    customer_state,
+                    customer_zip_postal,
+                    appt_statuses,
+                    product_of_interest,
+                    enterprise_ad_sub_category,
+                    bookings_gross,
+                    lead_created_date
+                FROM databricks
+                WHERE raw_leads > 0
+                    AND lead_created_date IS NOT NULL
+                ORDER BY lead_created_date DESC
             """
             
             # Execute query

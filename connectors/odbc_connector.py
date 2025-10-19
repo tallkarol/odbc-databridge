@@ -58,18 +58,19 @@ class ODBCConnector:
         
     def _build_connection_string(self) -> str:
         """Build the ODBC connection string from parameters."""
-        conn_str = f"DRIVER={{{self.driver}}};SERVER={self.server}"
-        
-        # Add port if specified - use ;PORT= format for MariaDB/MySQL, not comma
-        if self.port:
-            conn_str += f";PORT={self.port}"
-            
-        conn_str += (
-            f";DATABASE={self.database};"
-            f"UID={self.username};"
+        # Standard ODBC connection string format
+        parts = [
+            f"DRIVER={{{self.driver}}}",
+            f"SERVER={self.server}",
+            f"DATABASE={self.database}",
+            f"UID={self.username}",
             f"PWD={self.password}"
-        )
+        ]
         
+        if self.port:
+            parts.append(f"PORT={self.port}")
+        
+        conn_str = ";".join(parts)
         return conn_str
     
     def connect(self) -> pyodbc.Connection:
